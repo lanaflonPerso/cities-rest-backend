@@ -11,9 +11,41 @@ Remarque : le client H2 peut être lancé via *db/h2.bat* ou *db/h2.sh*, il suff
 > ALTER TABLE VISITS ADD FOREIGN KEY (MONUMENT_ID) REFERENCES MONUMENTS(ID);
 
 - Etape 4 : avec le client H2, remplir la table VISITS avec quelques données pertinente (date du jour, date dans le passé, date dans le futur, etc.)
+
+> INSERT INTO VISITS (DATE_VISITE, MONUMENT_ID) VALUES (SYSDATE, 34);
+
+> INSERT INTO VISITS (DATE_VISITE, MONUMENT_ID) VALUES (CURRENT_DATE, 34);
+
+> INSERT INTO VISITS (DATE_VISITE, MONUMENT_ID) VALUES (NOW(), 34);
+
+> INSERT INTO VISITS (DATE_VISITE, MONUMENT_ID) VALUES ('2015-03-18', 34);
+
+> INSERT INTO VISITS (DATE_VISITE, MONUMENT_ID) VALUES (TO_DATE('19/03/2015', 'DD/MM/YYYY'), 34);
+
+> INSERT INTO VISITS (DATE_VISITE, MONUMENT_ID) VALUES (DATEADD('DAY', -1, TODAY), 34);
+
 - Etape 5 : avec le client H2, requêter la table VISITS et mettre en forme de différentes façon la date de visite extraite (notion de formatage)
+
+> SELECT * FROM VISITS;
+
+> SELECT DATE_VISITE FROM VISITS;
+
+> SELECT TO_CHAR(DATE_VISITE,'DD/MM/YYYY') FROM VISITS;
+
+> SELECT DAY_OF_MONTH(DATE_VISITE), MONTH(DATE_VISITE), YEAR(DATE_VISITE) FROM VISITS;
+
 - Etape 6 : avec le client H2, requêter la table VISITS pour en extraire un sous-ensemble basé sur une restriction (clause WHERE) pertinente sur la date de la visite
+
+> SELECT TO_CHAR(DATE_VISITE,'DD/MM/YYYY') FROM VISITS WHERE DATE_VISITE = SYSDATE;
+
+> SELECT TO_CHAR(DATE_VISITE,'DD/MM/YYYY') FROM VISITS WHERE DATE_VISITE > TO_DATE('19/03/2015', 'DD/MM/YYYY');
+
 - Etape 7 : avec le client H2, requêter la table VISITS pour en extraire un sous-ensemble sur un intervalle de dates de visite
+
+> SELECT TO_CHAR(DATE_VISITE,'DD/MM/YYYY') FROM VISITS WHERE DATE_VISITE BETWEEN TO_DATE('01/01/2015', 'DD/MM/YYYY') AND TO_DATE('31/12/2016', 'DD/MM/YYYY');
+
+> SELECT TO_CHAR(DATE_VISITE,'DD/MM/YYYY') FROM VISITS WHERE DAYNAME(DATE_VISITE) = DAYNAME(SYSDATE);
+
 - Etape 8 : créer la classe *Visite* dans *co.simplon.PoleEmploi.patrimoine.modele* et l'intégrer au mapping JPA (ne pas oublier l'association avec *Monument*)
 - Etape 9 : enrichir l'endpoint *MonumentResource* avec une méthode *getVisitesByMonument* qui vise à renvoyer au format JSON la liste des visites pour un monument donné (id)
 - Etape 10 : enrichir l'endpoint *MonumentResource* avec une méthode *createVisite* qui vise à créer une visite pour un monument donné (s'inspirer de la méthode *createMonument* dans l'endpoint *VilleResource*)

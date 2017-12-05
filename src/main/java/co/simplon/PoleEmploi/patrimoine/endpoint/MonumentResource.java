@@ -17,7 +17,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import co.simplon.PoleEmploi.patrimoine.dao.MonumentDao;
+import co.simplon.PoleEmploi.patrimoine.dao.VisiteDao;
 import co.simplon.PoleEmploi.patrimoine.modele.Monument;
+import co.simplon.PoleEmploi.patrimoine.modele.Visite;
 
 @Path("/monuments")
 @RequestScoped
@@ -27,6 +29,9 @@ public class MonumentResource {
 
 	@Inject
 	private MonumentDao monumentDao;
+
+	@Inject
+	private VisiteDao visiteDao;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -55,7 +60,8 @@ public class MonumentResource {
 	@PUT
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateMonument(@PathParam("id") Long id, Monument monumentAModifier) {
+	public Response updateMonument(@PathParam("id") Long id,
+			Monument monumentAModifier) {
 		monumentAModifier.setIdentifiant(id);
 		monumentDao.updateMonument(monumentAModifier);
 		return Response.ok().build();
@@ -65,5 +71,20 @@ public class MonumentResource {
 	@Path("{id}")
 	public void deleteMonumentById(@PathParam("id") Long id) {
 		monumentDao.deleteMonumentById(id);
+	}
+
+	@GET
+	@Path("{id}/visites")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Visite> getVisitesByMonument(@PathParam("id") Long id,
+			@QueryParam("from") Integer from, @QueryParam("limit") Integer limit) {
+		if (from == null) {
+			from = 0;
+		}
+		if (limit == null) {
+			limit = DEFAULT_PAGE_SIZE;
+		}
+		List<Visite> visites = visiteDao.findAllForMonumentId(id, from, limit);
+		return visites;
 	}
 }
